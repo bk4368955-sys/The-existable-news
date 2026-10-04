@@ -94,13 +94,63 @@ footer{background:#101827;color:#b9c4d3;text-align:center;padding:30px}
 <p style="font-size:12px;color:#667085">Demo UI only. Real Google login and SMS OTP require a backend/authentication provider.</p>
 </div></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+
 <script>
-function toggleTheme(){document.body.classList.toggle('dark')}
-function openLogin(){document.getElementById('loginModal').style.display='flex'}
-function closeLogin(){document.getElementById('loginModal').style.display='none'}
-function demoLogin(type){alert(type+' login demo. Connect Firebase/Auth0 or another authentication service for real authentication.')}
-function submitForm(e,type){e.preventDefault();alert(type+' submitted successfully! (Demo)');e.target.reset()}
-window.onclick=e=>{if(e.target.id==='loginModal')closeLogin()}
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBbJi71tgdses4mw9c1I04DOwtCGWz-fxs",
+  authDomain: "existable-news.firebaseapp.com",
+  projectId: "existable-news",
+  storageBucket: "existable-news.firebasestorage.app",
+  messagingSenderId: "999881830416",
+  appId: "1:999881830416:web:9b7bf500403dbcc6ba1a95",
+  measurementId: "G-DM3S6Y4E78"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+}
+
+function openLogin(){
+  document.getElementById('loginModal').style.display = 'flex';
+}
+
+function closeLogin(){
+  document.getElementById('loginModal').style.display = 'none';
+}
+
+function demoLogin(type){
+  if(type !== 'Google') return;
+
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  auth.signInWithPopup(provider)
+    .then((result) => {
+      closeLogin();
+      alert("Welcome, " + (result.user.displayName || "User") + "!");
+    })
+    .catch((error) => {
+      console.error(error);
+      alert("Google login failed: " + error.message);
+    });
+}
+
+function submitForm(type, e){
+  e.preventDefault();
+  alert(type + " submitted successfully!");
+}
+
+window.onclick = e => {
+  if(e.target.id === 'loginModal'){
+    closeLogin();
+  }
+};
 </script>
 </body>
 </html>
