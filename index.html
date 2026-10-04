@@ -35,7 +35,7 @@ footer{background:#101827;color:#b9c4d3;text-align:center;padding:30px}
 <div class="logo">Existable <span>News</span></div>
 <nav><a href="#">Home</a><a href="#">World</a><a href="#">India</a><a href="#">Business</a><a href="#">Technology</a><a href="#">Sports</a><a href="#">Entertainment</a></nav>
 <div class="actions"><button class="btn theme" onclick="toggleTheme()">☾</button><button class="btn login" onclick="openLogin()">Login</button></div>
-</div>
+<button id="adminBtn" class="btn login" style="display:none" onclick="openAdminPanel()">Admin Panel</button></div>
 <div class="ticker">🔴 BREAKING NEWS &nbsp; | &nbsp; Follow the latest verified stories from around the world</div>
 </header>
 
@@ -123,6 +123,31 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 function toggleTheme(){
   document.body.classList.toggle('dark');
 }
+  
+  // YAHAN ADMIN CODE PASTE KARO
+  
+  auth.onAuthStateChanged(async (user) => {
+    const adminBtn = document.getElementById('adminBtn');
+
+    if (!adminBtn) return;
+
+    adminBtn.style.display = 'none';
+
+    if (!user) return;
+
+    try {
+      const adminDoc = await db
+        .collection('admins')
+        .doc(user.uid)
+        .get();
+
+      if (adminDoc.exists && adminDoc.data().admin === true) {
+        adminBtn.style.display = 'inline-block';
+      }
+    } catch (error) {
+      console.error('Admin check failed:', error);
+    }
+  });
 
 function openLogin(){
   document.getElementById('loginModal').style.display = 'flex';
